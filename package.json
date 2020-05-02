@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/vince59/node-bot/issues"
   },
-  "homepage": "https://github.com/vince59/node-bot#readme"
+  "homepage": "https://github.com/vince59/node-bot#readme",
+  "dependencies": {
+    "ws": "^7.2.5"
+  }
 }
