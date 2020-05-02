@@ -6,7 +6,7 @@ let topic = {};
 
 wss.on('connection', function connection(ws) {
 
-  console.log('zz');
+  console.log('New connection');
 
   ws.on('message', function incoming(msg) {
     const mess = JSON.parse(msg)
