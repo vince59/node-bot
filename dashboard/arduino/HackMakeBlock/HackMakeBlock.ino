@@ -1,37 +1,59 @@
 #include "MeAuriga.h"
+#include <Wire.h>
 
-String inputString = "";         // a String to hold incoming data
-bool startCom = false;  // whether the string is complete
+#define NOP "NOP"
+#define BUZ "BUZ"
+#define GYR "GYR"
+
+MeBuzzer buzzer;
+MeGyro gyro(0, 0x69);
+
+String inputString = "";
+bool startCom = false;
 bool stringComplete = false;
+int X;
+int Y;
+int Z;
 
 void setup() {
   // initialize serial:
   Serial.begin(9600);
-  // reserve 200 bytes for the inputString:
   inputString.reserve(200);
+  buzzer.setpin(45);
+  gyro.begin();                                                                                
 }
 
 void loop() {
   if (!startCom) {
-    Serial.println("Bot");
+    Serial.println(NOP);
     delay(500);
   }
-  if (stringComplete) {
-    Serial.println(stringComplete);
+  else {
+    if (stringComplete) {
+      if (inputString == BUZ) {
+        buzzer.tone(400, 500);
+      }
+      stringComplete = false;
+      inputString = "";
+    }
+    gyro.update();
+    X = gyro.getAngle(1);
+    Y = gyro.getAngle(2);
+    Z = gyro.getAngle(3);
     delay(500);
+    Serial.println(String(GYR) + " " + String(X) + " "+ String(Y) + " "+ String(Z) + " ");
   }
 }
 
 void serialEvent() {
   while (Serial.available()) {
-    // get the new byte:
     char inChar = (char)Serial.read();
-    // add it to the inputString:
-    inputString += inChar;
-    // if the incoming character is a newline, set a flag so the main loop can
-    // do something about it:
     if (inChar == '\n') {
       stringComplete = true;
     }
+    else {
+      inputString += inChar;
+    }
+    startCom = true;
   }
 }
