@@ -1,31 +1,37 @@
-/**
- * \par Copyright (C), 2012-2016, MakeBlock
- * @file    BuzzerTest.ino
- * @author  MakeBlock
- * @version V1.0.0
- * @date    2015/07/24
- * @brief   Description: this file is sample code for buzzer
- *
- * Function List:
- * 1. void buzzerOn()
- * 2. void buzzerOff()
- *
- * \par History:
- * <pre>
- * `<Author>`         `<Time>`        `<Version>`        `<Descr>`
- * Mark Yan         2015/07/24     1.0.0            Rebuild the old lib.
- * </pre>
- */
 #include "MeAuriga.h"
 
-void setup() 
-{
+String inputString = "";         // a String to hold incoming data
+bool startCom = false;  // whether the string is complete
+bool stringComplete = false;
+
+void setup() {
+  // initialize serial:
+  Serial.begin(9600);
+  // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
 }
 
-void loop()
-{
-  buzzerOn();
-  delay(1000);
-  buzzerOff();
-  delay(1000);
+void loop() {
+  if (!startCom) {
+    Serial.println("Bot");
+    delay(500);
+  }
+  if (stringComplete) {
+    Serial.println(stringComplete);
+    delay(500);
+  }
+}
+
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
+  }
 }
